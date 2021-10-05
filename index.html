@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src=" https://unpkg.com/leaflet@1.6.0/dist/leaflet.js "></script>
+	<script type="text/javascript" src="paises_mundo.js"></script>
+	<script type="text/javascript" src="ciudades_mundo.js"></script>
+	<link rel="stylesheet" href=" https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+	<style>
+	
+	#map {
+		width: 100%;
+		height: 580px;
+		box-shadow: 5px 5px 5px #888;
+	}
+
+	
+	</style>
+	
+</head>
+	<body>
+		<div id = 'map'>
+		</div>
+		
+		<script>
+		
+			function getColor(d) {
+				switch (d) {
+					case 'South America':
+						return '#FFFF00';
+					case 'North America':
+						return '#0000FF';
+					case 'Oceania':
+						return '#800080';
+					case 'Africa':
+						return '#008000';
+					case 'Europe':
+						return '#FFA500';
+					case 'Asia':
+						return '#FF0000';
+					default:
+						return '#FFEDA0';
+				}
+			}
+
+			
+			function style(feature) {
+				return {
+					fillColor: getColor(feature.properties.continent),
+					weight: 2,
+					opacity: 1,
+					color: 'white',
+					dashArray: '3',
+					fillOpacity: 0.7
+				};
+			}
+		
+		
+			function getForm1(d) {
+				
+					return d == 'S' ? 'yellow':
+					d == 'N' ? 'green':
+					'blue';
+			};
+		
+
+		function style2(feature) {
+				return {
+					
+					fillColor: getForm1(feature.properties.CAPITAL),
+					color:getForm1(feature.properties.CAPITAL),
+					weight:1,
+					opacity: 1,
+					fillOpacity: 0.8
+								
+					
+				}
+		}
+			
+		
+		
+		
+		
+			
+			var OSM = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+				+ 'contributors',
+				maxZoom: 18
+			}); 
+			var Paises = L.tileLayer.wms("http://localhost:8080/geoserver/wms", { 
+				layers: 'paises_mundo',
+				format: 'image/png',
+				transparent: true,
+				tiled: true,
+				attribution: "Natural Earth"
+			});
+			var cities = L.tileLayer.wms("http://localhost:8080/geoserver/wms", { 
+				layers: 'ciudades_mundo',
+				format: 'image/png',
+				transparent: true,
+				tiled: true,
+				attribution: "Natural Earth"
+			});
+			
+				var map = L.map('map', {
+				center: [41.66, -4.72],
+				layers: [OSM,Paises,cities],
+				zoom: 15,
+				scrollWheelZoom: true,
+			});
+		
+		
+		
+			L.geoJson(paises_mundoo, {
+				style: style
+			}).addTo(map);
+			
+			L.geoJson(ciudades_mundoo, {
+				pointToLayer: function(feature,latlng) {
+					return L.circleMarker(latlng,style2(feature));
+					
+				}
+			}).addTo(map);
+		
+
+			
+		
+
+		</script>
+	</body>
+</html>
